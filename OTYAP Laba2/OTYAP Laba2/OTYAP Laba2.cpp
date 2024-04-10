@@ -16,6 +16,17 @@ struct Lex
 	char* str;
 };
 /*
+Включает ли в себя слово этот символ
+*/
+bool HasWordChar(char* word, int length, char c)
+{
+	for (int i = 0; i < length; i++)
+		if (word[i] == c)
+				return true;
+
+	return false;
+}
+/*
 Функция лексического анализа
 */
 vector<Lex> LexAnalysis(char* str)
@@ -24,7 +35,9 @@ vector<Lex> LexAnalysis(char* str)
 	int position = 0; // текущая позиция в строке
 	AState state = AState::S; // текущее состояние
 	Lex lexema; // текущая лексема
-	int firstPos; // позиция начала лексемы
+	int firstPos = 0; // позиция начала лексемы
+	char* word = new char[100];
+
 	while (str[position] != '\0')
 	{
 		char currentChar = str[position];
@@ -33,39 +46,24 @@ vector<Lex> LexAnalysis(char* str)
 		{
 			firstPos = position;
 			lexema.valid = true;
+			word = new char[100];
 		}
 
-		// Переход по матрице состояний
-		switch (currentChar) {
-			case '0':
-				if (state == AState::S) state = AState::A;
-				if (state == AState::A) state = AState::A;
-				if (state == AState::E) state = AState::E;
-				break;
-			case '1':
-				if (state == AState::S) state = AState::A;
-				if (state == AState::A) state = AState::A;
-				if (state == AState::E) state = AState::E;
-				break;
-				// флаг корректности лексемы (соответствия заданию)
-				// текст лексемы
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-			case '6':
-			case '7':
-			case '8':
-			case '9':
-				if (state == AState::S) state = AState::E;
-				if (state == AState::A) state = AState::E;
-				if (state == AState::E) state = AState::E;
-				break;
-			case ' ':
-				if (state == AState::S) state = AState::F;
-				if (state == AState::A) state = AState::F;
-				if (state == AState::E) state = AState::F;
-				break;
+		// переход по матрице состояний
+		if (currentChar == ' ') {
+			if (state == AState::S) state = AState::F;
+			if (state == AState::A) state = AState::F;
+			if (state == AState::E) state = AState::F;
+		}
+		else if (HasWordChar(word, position - firstPos + 1, currentChar)) {
+			if (state == AState::S) state = AState::E;
+			if (state == AState::A) state = AState::E;
+			if (state == AState::E) state = AState::E;
+		}
+		else if (HasWordChar(word, position - firstPos + 1, currentChar) == false) {
+			if (state == AState::S) state = AState::A;
+			if (state == AState::A) state = AState::A;
+			if (state == AState::E) state = AState::E;
 		}
 
 		// Определение соответствия лексемы заданию
@@ -84,7 +82,8 @@ vector<Lex> LexAnalysis(char* str)
 			result.push_back(lexema);
 			state = AState::S;
 		}
-		position++;
+
+		word[position - firstPos] = str[position++];
 	}
 	return result;
 }
@@ -97,7 +96,7 @@ int main()
 	in.getline(text, 100, '\0');
 	vector<Lex> result = LexAnalysis(text);
 
-	for (int i = 0; i < result.size(); i++) {
+	for (int i = 0; i < (int)result.size(); i++) {
 		if (result[i].valid)
 			out << result[i].str << " ";
 	}
