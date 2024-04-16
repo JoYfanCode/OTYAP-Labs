@@ -1,6 +1,7 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS // очень важная строчка!
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #include <vector>
 using namespace std;
 /*
@@ -26,6 +27,14 @@ bool HasWordChar(char* word, int length, char c)
 
 	return false;
 }
+
+bool isNumber(char c)
+{
+	if (c >= '0' && c <= '9')
+		return true;
+	else
+		return false;
+}
 /*
 Функция лексического анализа
 */
@@ -42,7 +51,7 @@ vector<Lex> LexAnalysis(char* str)
 	{
 		char currentChar = str[position];
 		// Инициализация лексемы при обнаружении непробельного символа
-		if (state == AState::S && currentChar != ' ')
+		if (state == AState::S)
 		{
 			firstPos = position;
 			lexema.valid = true;
@@ -50,10 +59,15 @@ vector<Lex> LexAnalysis(char* str)
 		}
 
 		// переход по матрице состояний
-		if (currentChar == ' ') {
+		if (currentChar == ' ' || currentChar == '\t' || currentChar == '\n') {
 			if (state == AState::S) state = AState::F;
 			if (state == AState::A) state = AState::F;
 			if (state == AState::E) state = AState::F;
+		}
+		else if (isNumber(currentChar) == false) {
+			if (state == AState::S) state = AState::E;
+			if (state == AState::A) state = AState::E;
+			if (state == AState::E) state = AState::E;
 		}
 		else if (HasWordChar(word, position - firstPos + 1, currentChar)) {
 			if (state == AState::S) state = AState::E;
@@ -73,18 +87,35 @@ vector<Lex> LexAnalysis(char* str)
 		if (state == AState::F)
 		{
 			int length = position - firstPos;
+
 			lexema.str = new char[length + 1];
 			// Вычленение подстроки и запись в лексему
 			strncpy(&lexema.str[0], &str[0] + firstPos, length);
 			// Постановка финализирующего 0
 			lexema.str[length] = '\0';
 			// Запись лексемы в список
-			result.push_back(lexema);
+			if (length > 0)
+				result.push_back(lexema);
+
 			state = AState::S;
 		}
 
-		word[position - firstPos] = str[position++];
+		word[position - firstPos] = str[position];
+		position++;
 	}
+
+	// проверяем последнее слово
+	int length = position - firstPos;
+
+	lexema.str = new char[length + 1];
+	strncpy(&lexema.str[0], &str[0] + firstPos, length);
+	lexema.str[length] = '\0';
+
+	if (length > 0 && lexema.str[length - 1] != ' ')
+		result.push_back(lexema);
+
+	state = AState::S;
+
 	return result;
 }
 int main()
@@ -95,7 +126,7 @@ int main()
 	char text[100];
 	in.getline(text, 100, '\0');
 	vector<Lex> result = LexAnalysis(text);
-
+	
 	for (int i = 0; i < (int)result.size(); i++) {
 		if (result[i].valid)
 			out << result[i].str << " ";

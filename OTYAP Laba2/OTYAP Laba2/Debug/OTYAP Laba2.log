@@ -1,2 +1,3 @@
 ﻿  OTYAP Laba2.cpp
-  OTYAP Laba2.vcxproj -> D:\Users\joyfa\Desktop\4 Semestr\Labs\OTYAP Labs\OTYAP Laba2\Debug\OTYAP Laba2.exe
+D:\Users\joyfa\Desktop\4 Semestr\Labs\OTYAP Labs\OTYAP Laba2\OTYAP Laba2\OTYAP Laba2.cpp(127,30): error C2065: н: необъявленный идентификатор
+D:\Users\joyfa\Desktop\4 Semestr\Labs\OTYAP Labs\OTYAP Laba2\OTYAP Laba2\OTYAP Laba2.cpp(128,2): error C2143: синтаксическая ошибка: отсутствие ";" перед "<template-id>"
