@@ -1,0 +1,3 @@
+﻿  OTYAP Laba4.cpp
+D:\Users\joyfa\Desktop\4 Semestr\Labs\OTYAP Labs\OTYAP Laba4\OTYAP Laba4\OTYAP Laba4.cpp(445,15): warning C4154: удаление массива; выполнено преобразование к указателю
+LINK : fatal error LNK1168: не удается открыть D:\Users\joyfa\Desktop\4 Semestr\Labs\OTYAP Labs\OTYAP Laba4\Debug\OTYAP Laba4.exe для записи

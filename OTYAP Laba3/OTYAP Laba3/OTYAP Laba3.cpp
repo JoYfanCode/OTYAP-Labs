@@ -68,6 +68,7 @@ vector<Lex> LexAnalysis(char* str)
 	Lex lexema; // текущая лексема
 	int firstPos = 0; // позиция начала лексемы
 	char* word = new char[100];
+	bool next = true;
 
 	while (str[position] != '\0')
 	{
@@ -77,6 +78,7 @@ vector<Lex> LexAnalysis(char* str)
 		{
 			firstPos = position;
 			word = new char[100];
+			next = true;
 		}
 
 		char currentChar = str[position];
@@ -108,6 +110,18 @@ vector<Lex> LexAnalysis(char* str)
 			else if (isIndentation(currentChar)) {
 				state = AState::F_word;
 			}
+			else if (isArithmetic(currentChar)) {
+				next = false;
+				state = AState::F_word;
+			}
+			else if (currentChar == '=') {
+				next = false;
+				state = AState::F_word;
+			}
+			else if (currentChar == '>' || currentChar == '<'){
+				next = false;
+				state = AState::F_word;
+			}
 			else {
 				state = AState::A_wrong;
 			}
@@ -121,6 +135,21 @@ vector<Lex> LexAnalysis(char* str)
 				lexema.type = Types::vl;
 				state = AState::F_const;
 			}
+			else if (isArithmetic(currentChar)) {
+				next = false;
+				lexema.type = Types::vl;
+				state = AState::F_const;
+			}
+			else if (currentChar == '=') {
+				next = false;
+				lexema.type = Types::vl;
+				state = AState::F_const;
+			}
+			else if (currentChar == '>' || currentChar == '<'){
+				next = false;
+				lexema.type = Types::vl;
+				state = AState::F_const;
+			}
 			else {
 				state = AState::A_wrong;
 			}
@@ -131,6 +160,11 @@ vector<Lex> LexAnalysis(char* str)
 				lexema.type = Types::ao;
 				state = AState::F_arithmetic;
 			}
+			else if (isalnum(currentChar)) {
+				next = false;
+				lexema.type = Types::ao;
+				state = AState::F_arithmetic;
+			}
 			else {
 				state = AState::A_wrong;
 			}
@@ -138,6 +172,11 @@ vector<Lex> LexAnalysis(char* str)
 		// Equal
 		else if (state == AState::A_equal) {
 			if (isIndentation(currentChar)) {
+				lexema.type = Types::eq;
+				state = AState::F_equal;
+			}
+			else if (isalnum(currentChar)) {
+				next = false;
 				lexema.type = Types::eq;
 				state = AState::F_equal;
 			}
@@ -154,12 +193,22 @@ vector<Lex> LexAnalysis(char* str)
 				lexema.type = Types::co;
 				state = AState::F_compare;
 			}
+			else if (isalnum(currentChar)) {
+				next = false;
+				lexema.type = Types::co;
+				state = AState::F_compare;
+			}
 			else {
 				state = AState::A_wrong;
 			}
 		}
 		else if (state == AState::B_compare) {
 			if (isIndentation(currentChar)) {
+				lexema.type = Types::co;
+				state = AState::F_compare;
+			}
+			else if (isalnum(currentChar)) {
+				next = false;
 				lexema.type = Types::co;
 				state = AState::F_compare;
 			}
@@ -197,7 +246,7 @@ vector<Lex> LexAnalysis(char* str)
 			state = AState::S;
 		}
 
-		position++;
+		if (next) position++;
 	}
 
 	return result;

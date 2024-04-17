@@ -1,0 +1,1 @@
+for[fo] i[id] =[eq] 10[vl] +[ao] 7[vl] tll[id] 67[vl] *[ao] b[id] -[ao] 789[vl] y[id] =[eq] 19[vl] next[ne] 

@@ -1,0 +1,1 @@
+for i=10+7 tll 67*b-789 y=19 next

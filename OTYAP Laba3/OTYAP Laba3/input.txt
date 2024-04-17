@@ -1,1 +1,1 @@
-for i5 = 57 to b - 4 >= 3 < 2 next
+for i5=57 to b-4>=38<6 next
